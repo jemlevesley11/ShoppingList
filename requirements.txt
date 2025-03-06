@@ -3,3 +3,4 @@ dash-bootstrap-components
 pandas
 speechrecognition
 pyttsx3
+gunicorn
