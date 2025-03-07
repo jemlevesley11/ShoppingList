@@ -5,6 +5,7 @@ import pandas as pd
 
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server  # Needed for deployment
 
 # Load the Excel file with the specific path
 df = pd.read_excel(r'MasterList2.xlsx', sheet_name='Sheet1')
