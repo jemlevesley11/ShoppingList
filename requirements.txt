@@ -5,3 +5,4 @@ speechrecognition
 pyttsx3
 gunicorn
 openpyxl
+espeak
