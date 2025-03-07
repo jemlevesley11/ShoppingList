@@ -2,9 +2,6 @@ import dash
 from dash import dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
-import speech_recognition as sr
-import threading
-import pyttsx3
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server  # Needed for deployment
@@ -16,45 +13,6 @@ for i in range(len(df)):
     items.append({"name": df["Item"][i], "max": df["Number"][i]})
 
 selections = []
-
-# Initialize the text-to-speech engine
-engine = pyttsx3.init()
-
-def get_voice_input():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Please say 'yes' or 'no'...")
-        audio = recognizer.listen(source)
-        try:
-            text = recognizer.recognize_google(audio)
-            print(f"You said: {text}")
-            return text
-        except sr.UnknownValueError:
-            print("Sorry, I could not understand the audio.")
-        except sr.RequestError:
-            print("Could not request results; check your network connection.")
-    return None
-
-def ask_question(item):
-    question = f"Would you like to select {item['name']}? The maximum quantity is {item['max']}."
-    engine.say(question)
-    engine.runAndWait()
-    print(question)
-
-def voice_input_thread():
-    while items:
-        if items:
-            ask_question(items[0])
-        text = get_voice_input()
-        if text:
-            if 'yes' in text.lower():
-                selections.append({"name": items[0]['name'], "quantity": 1})  # Default quantity, can be modified
-                items.pop(0)
-            elif 'no' in text.lower():
-                items.pop(0)
-
-voice_thread = threading.Thread(target=voice_input_thread)
-voice_thread.start()
 
 app.layout = dbc.Container([
     html.H2("Shopping List"),
