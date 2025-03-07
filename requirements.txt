@@ -4,3 +4,4 @@ pandas
 speechrecognition
 pyttsx3
 gunicorn
+openpyxl
