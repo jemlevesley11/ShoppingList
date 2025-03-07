@@ -9,7 +9,7 @@ import pyttsx3
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server  # Needed for deployment
 
-df = pd.read_excel(r'MasterList.xlsx', sheet_name='Sheet1')
+df = pd.read_excel(r'MasterList2.xlsx', sheet_name='Sheet1')
 
 items = []
 for i in range(len(df)):
