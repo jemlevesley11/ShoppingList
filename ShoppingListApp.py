@@ -46,7 +46,7 @@ app.layout = dbc.Container([
 # 📧 Email Sending Function
 def send_email(shopping_list):
     #load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
-    receiver_email = "jemlevesley11@gmail.com, jeremy@uniworx.org"
+    receiver_email = ["jemlevesley11@gmail.com, jeremy@uniworx.org"]
     sender_email = os.getenv("MY_EMAIL")
     password = os.getenv("MY_EMAIL_PASSWORD")
     print(sender_email)
@@ -55,8 +55,8 @@ def send_email(shopping_list):
     # Email Setup
     msg = MIMEMultipart()
     msg["From"] = sender_email
-    msg["To"] = receiver_email
-    msg["Subject"] = "Your Shopping List"
+    msg["To"] = ", ".join(receiver_emails)
+    msg["Subject"] = "Dottie's Shopping List"
 
     # Email Body
     body = "Here is your shopping list:\n\n" + "\n".join([f"{item['name']}: {item['quantity']}" for item in shopping_list])
