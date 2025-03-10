@@ -1,3 +1,4 @@
+import os
 import dash
 from dash import dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
@@ -5,6 +6,7 @@ import pandas as pd
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
 
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -43,9 +45,13 @@ app.layout = dbc.Container([
 
 # 📧 Email Sending Function
 def send_email(shopping_list):
-    sender_email = "jemlevesley11@gmail.com"  # Change to your email
-    receiver_email = "jemlevesley11@gmail.com"  # Change to your recipient's email
-    password = "cuqm drww xuws pkwh"  # Use an App Password if using Gmail
+    from dotenv import load_dotenv
+    load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
+    sender_email = os.getenv("SENDER_EMAIL")
+    receiver_email = "jemlevesley11@gmail.com"
+    password = os.getenv("EMAIL_PASSWORD")
+    print(sender_email)
+    print(password)
 
     # Email Setup
     msg = MIMEMultipart()
