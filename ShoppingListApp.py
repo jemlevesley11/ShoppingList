@@ -13,7 +13,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server  # Needed for deployment
 
 # Load the Excel file with the specific path
-df = pd.read_excel(r'C:\\Users\\Jeremy Levesley\\Documents\\GitHub\\ShoppingList\\MasterList2.xlsx', sheet_name='Sheet1')
+df = pd.read_excel(r'MasterList2.xlsx', sheet_name='Sheet1')
 
 # Original items list
 original_items = [{"name": df["Item"][i], "max": df["Number"][i]} for i in range(len(df))]
@@ -39,14 +39,13 @@ app.layout = dbc.Container([
     
     # Centered image of Dottie (Make sure 'dorothy.png' is in the 'assets' folder)
     html.Div([
-        html.Img(src='/assets/dorothy.png', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
+        html.Img(src='dorothy.png', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
     ], style={'textAlign': 'center', 'marginTop': '30px'})
 ], fluid=True)
 
 # 📧 Email Sending Function
 def send_email(shopping_list):
-    from dotenv import load_dotenv
-    load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
+    #load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = "jemlevesley11@gmail.com"
     password = os.getenv("EMAIL_PASSWORD")
