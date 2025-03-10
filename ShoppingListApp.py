@@ -2,13 +2,16 @@ import dash
 from dash import dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
 import pandas as pd
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server  # Needed for deployment
 
 # Load the Excel file with the specific path
-df = pd.read_excel(r'MasterList2.xlsx', sheet_name='Sheet1')
+df = pd.read_excel(r'C:\\Users\\Jeremy Levesley\\Documents\\GitHub\\ShoppingList\\MasterList2.xlsx', sheet_name='Sheet1')
 
 # Original items list
 original_items = [{"name": df["Item"][i], "max": df["Number"][i]} for i in range(len(df))]
@@ -28,11 +31,42 @@ app.layout = dbc.Container([
     html.H4("Selected Items:"),
     html.Div(id='review-output', style={'marginTop': 20, 'whiteSpace': 'pre-wrap'}),
     
+    # Send email button
+    dbc.Button("Send Email", id="send-email", color="success", className="me-2"),
+    html.Div(id='email-status', style={'marginTop': 20}),
+    
     # Centered image of Dottie (Make sure 'dorothy.png' is in the 'assets' folder)
     html.Div([
-        html.Img(src='dorothy.png', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
+        html.Img(src='/assets/dorothy.png', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
     ], style={'textAlign': 'center', 'marginTop': '30px'})
 ], fluid=True)
+
+# 📧 Email Sending Function
+def send_email(shopping_list):
+    sender_email = "jemlevesley11@gmail.com"  # Change to your email
+    receiver_email = "jemlevesley11@gmail.com"  # Change to your recipient's email
+    password = "cuqm drww xuws pkwh"  # Use an App Password if using Gmail
+
+    # Email Setup
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+    msg["Subject"] = "Your Shopping List"
+
+    # Email Body
+    body = "Here is your shopping list:\n\n" + "\n".join([f"{item['name']}: {item['quantity']}" for item in shopping_list])
+    msg.attach(MIMEText(body, "plain"))
+
+    try:
+        # Connect to Gmail's SMTP server (change for other providers)
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.quit()
+        return "✅ Email Sent Successfully!"
+    except Exception as e:
+        return f"❌ Email Sending Failed: {str(e)}"
 
 # Callback for managing items
 @app.callback(
@@ -97,9 +131,18 @@ def update_list(add_clicks, no_clicks, reset_clicks, quantity):
 
 def generate_selected_items(selections):
     """Generate the selected items list."""
-    return html.Ul([html.Li([
-        f"{item['name']}: {item['quantity']} "
-    ]) for item in selections])
+    return html.Ul([html.Li([f"{item['name']}: {item['quantity']} "]) for item in selections])
+
+# Callback for sending the email
+@app.callback(
+    Output('email-status', 'children'),
+    Input('send-email', 'n_clicks'),
+    prevent_initial_call=True
+)
+def send_shopping_list(n_clicks):
+    if selections:
+        return send_email(selections)  # Send the selected items as the shopping list
+    return "❌ No items selected to send."
 
 if __name__ == "__main__":
     app.run_server(debug=False)  # Run the app
