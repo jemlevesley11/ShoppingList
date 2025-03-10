@@ -39,7 +39,7 @@ app.layout = dbc.Container([
     
     # Centered image of Dottie (Make sure 'dorothy.png' is in the 'assets' folder)
     html.Div([
-        html.Img(src='dorothy.PNG', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
+        html.Img(src='/assets/dorothy.PNG', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
     ], style={'textAlign': 'center', 'marginTop': '30px'})
 ], fluid=True)
 
