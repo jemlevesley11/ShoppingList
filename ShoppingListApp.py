@@ -47,6 +47,7 @@ app.layout = dbc.Container([
 def send_email(shopping_list):
     #load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
     sender_email = "jemlevesley11@gmail.com"
+    sender_email = os.getenv("MY_EMAIL")
     receiver_email = "jemlevesley11@gmail.com"
     password = "cuqm drww xuws pkwh"
     print(sender_email)
