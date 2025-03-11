@@ -152,7 +152,7 @@ def send_email(shopping_list, recipient_email):
     msg = MIMEMultipart()
     msg["From"] = sender_email
     msg["To"] = recipient_email  # Use the selected email
-    msg["Subject"] = "Your Shopping List"
+    msg["Subject"] = "Mum's Shopping List"
 
     # Email Body
     body = "Here is your shopping list:\n\n" + "\n".join([f"{item['name']}: {item['quantity']}" for item in shopping_list])
