@@ -20,10 +20,21 @@ original_items = [{"name": df["Item"][i], "max": df["Number"][i]} for i in range
 items = original_items.copy()  # Create a mutable copy of the items list
 selections = []  # List to store selected items
 
+# Recipient email mapping
+recipient_options = [
+    {"label": "Mark", "value": "MarkLevesley@gmail.com"},
+    {"label": "Andy", "value": "andrew.levesley@blueyonder.co.uk"},
+    {"label": "Steve", "value": "stephen.levesley@mac.com"},
+    {"label": "Jem", "value": "jemlevesley11@gmail.com"},
+    {"label": "Bob", "value": "bobbothegoat@gmail.com"},
+    {"label": "Liz", "value": "levesleyliz@gmail.com"}
+
+]
+
 # Layout
 app.layout = dbc.Container([
     html.H2("Dottie's Shopping List"),  # Title changed
-    html.Div(id='item-prompt', style={'fontSize': 20, 'marginBottom': 20}),  # Display current item here
+    html.Div(id='item-prompt', style={'fontSize': 30, 'marginBottom': 20, 'color': 'blue','backgroundColor': 'lightyellow'}),  # Display current item here
     dcc.Dropdown(id='quantity-dropdown', placeholder='Select quantity'),
     html.Br(),
     dbc.Button("Add to List", id='add-button', color='primary', className='me-2'),
@@ -33,43 +44,24 @@ app.layout = dbc.Container([
     html.H4("Selected Items:"),
     html.Div(id='review-output', style={'marginTop': 20, 'whiteSpace': 'pre-wrap'}),
     
+    # Dropdown for selecting recipient email
+    html.H4("Select Email Recipient:"),
+    dcc.Dropdown(
+        id='recipient-dropdown',
+        options=recipient_options,
+        placeholder="Choose a recipient"
+    ),
+    html.Br(),
+    
     # Send email button
     dbc.Button("Send Email", id="send-email", color="success", className="me-2"),
     html.Div(id='email-status', style={'marginTop': 20}),
     
-    # Centered image of Dottie (Make sure 'dorothy.png' is in the 'assets' folder)
+    # Centered image of Dottie
     html.Div([
         html.Img(src='/assets/dorothy.PNG', style={'width': '200px', 'height': 'auto', 'margin': '0 auto', 'display': 'block'}),
     ], style={'textAlign': 'center', 'marginTop': '30px'})
 ], fluid=True)
-
-# 📧 Email Sending Function
-def send_email(shopping_list):
-    #load_dotenv("C:\\Users\Jeremy Levesley\\ShoppingList\\env_var.env")
-    receiver_email = "jemlevesley11@gmail.com"
-    sender_email = os.getenv("MY_EMAIL")
-    password = os.getenv("MY_EMAIL_PASSWORD")
-
-    # Email Setup
-    msg = MIMEMultipart()
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-    msg["Subject"] = "Dottie's Shopping List"
-
-    # Email Body
-    body = "Here is your shopping list:\n\n" + "\n".join([f"{item['name']}: {item['quantity']}" for item in shopping_list])
-    msg.attach(MIMEText(body, "plain"))
-
-    try:
-        # Connect to Gmail's SMTP server (change for other providers)
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
-        server.quit()
-        return "✅ Email Sent Successfully!"
-    except Exception as e:
-        return f"❌ Email Sending Failed: {str(e)}"
 
 # Callback for managing items
 @app.callback(
@@ -140,12 +132,41 @@ def generate_selected_items(selections):
 @app.callback(
     Output('email-status', 'children'),
     Input('send-email', 'n_clicks'),
+    State('recipient-dropdown', 'value'),  # Get the selected recipient
     prevent_initial_call=True
 )
-def send_shopping_list(n_clicks):
+def send_shopping_list(n_clicks, selected_recipient):
+    if not selected_recipient:
+        return "❌ Please select a recipient before sending the email."
+    
     if selections:
-        return send_email(selections)  # Send the selected items as the shopping list
+        return send_email(selections, selected_recipient)  # Pass the selected recipient email
     return "❌ No items selected to send."
+
+def send_email(shopping_list, recipient_email):
+    sender_email = os.getenv("SENDER_EMAIL")
+    password = os.getenv("EMAIL_PASSWORD")
+
+    # Email Setup
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = recipient_email  # Use the selected email
+    msg["Subject"] = "Your Shopping List"
+
+    # Email Body
+    body = "Here is your shopping list:\n\n" + "\n".join([f"{item['name']}: {item['quantity']}" for item in shopping_list])
+    msg.attach(MIMEText(body, "plain"))
+
+    try:
+        # Connect to Gmail's SMTP server
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+        server.quit()
+        return "✅ Email Sent Successfully!"
+    except Exception as e:
+        return f"❌ Email Sending Failed: {str(e)}"
 
 if __name__ == "__main__":
     app.run_server(debug=False)  # Run the app
