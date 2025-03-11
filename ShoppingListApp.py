@@ -140,12 +140,13 @@ def send_shopping_list(n_clicks, selected_recipient):
         return "❌ Please select a recipient before sending the email."
     
     if selections:
+        print(selected_recipient)
         return send_email(selections, selected_recipient)  # Pass the selected recipient email
     return "❌ No items selected to send."
 
 def send_email(shopping_list, recipient_email):
-    sender_email = os.getenv("SENDER_EMAIL")
-    password = os.getenv("EMAIL_PASSWORD")
+    sender_email = os.getenv("MY_EMAIL")
+    password = os.getenv("MY_EMAIL_PASSWORD")
 
     # Email Setup
     msg = MIMEMultipart()
