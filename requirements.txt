@@ -1,6 +1,11 @@
 dash
 dash-bootstrap-components
 pandas
+<<<<<<< Updated upstream
 python-dotenv
 openpyxl
 gunicorn
+=======
+speechrecognition
+pyttsx3
+>>>>>>> Stashed changes
